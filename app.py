@@ -8,7 +8,7 @@ wordle = config.get('secret', 'word').upper()
 word = list(wordle)
 count = 0
 
-guess = input("Take you guess: \n ").upper()
+guess = input("Take your guess: \n ").upper()
 
 grids = [["0", "0", "0", "0", "0"],
          ["0", "0", "0", "0", "0"],
@@ -23,7 +23,7 @@ while count != 5:
         break
     if len(guess) != 5:
         print("Word length should exactly be 5 characters, plese try again")
-        guess = input("Take you guess: \n ").upper()
+        guess = input("Take your guess: \n ").upper()
     for i in range(len(guess)):
         if guess[i] in word:
             if guess[i] == word[i]:
@@ -46,4 +46,4 @@ while count != 5:
     if count == 5:
         print(boxit("Sorry, you didn't make it! Better luck next time:)", 'red'))
     print()
-    guess = input("Take you guess: \n ").upper()
+    guess = input("Take your guess: \n ").upper()
