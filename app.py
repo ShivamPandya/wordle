@@ -43,7 +43,8 @@ while count != 5:
         print(boxit(f"  Totatl tries: {count+1}", "orange"))
         break
     count += 1
-    if count == 5:
+    if count == 6:
         print(boxit("Sorry, you didn't make it! Better luck next time:)", 'red'))
+        break
     print()
     guess = input("Take your guess: \n ").upper()
