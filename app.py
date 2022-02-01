@@ -4,9 +4,8 @@ from boxit.boxit import boxit
 def gameplay():
 
     wordle = get_word()
-    word = list(wordle)
+    word = list("WHALE")
     count = 0
-
     grids = [["0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0"],
@@ -14,7 +13,8 @@ def gameplay():
             ["0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0"]]
 
-    clscr()
+    score = ""
+
     print_grid(grids)
 
     guess = input("\nTake your guess: \n ").upper()
@@ -24,7 +24,6 @@ def gameplay():
             print("You quit the game")
             break
         if not check_word(guess.lower()):
-            clscr()
             print_grid(grids)
             print("Guess not allowed! Please try again")
             guess = input("Take your guess: \n ").upper()
@@ -33,16 +32,19 @@ def gameplay():
             if guess[i] in word:
                 if guess[i] == word[i]:
                     grids[count][i] = boxit(guess[i], 'green')
+                    score += "g"
                 else:
                     grids[count][i] = boxit(guess[i], 'yellow')
+                    score += "y"
             else:
                 grids[count][i] = guess[i]
-        clscr()
+                score += 'n'
         print_grid(grids)
 
         if guess == ''.join(word):
             print(boxit("YOU WON!", "green", pattern = 'solid', shift=2, spacing=2))
             print(boxit(f"  Totatl tries: {count+1}", "orange"))
+            print(display_score(score))
             break
         count += 1
         if count == 6:
@@ -53,16 +55,13 @@ def gameplay():
             break
         print()
         guess = input("Take your guess: \n ").upper()
-        clscr()
 
 def print_grid(grids):
+    os.system('cls' if os.name == 'nt' else 'clear')
     for i in grids:
         for j in i:
             print(f"  {j}", end="")
         print()
-
-def clscr():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 def get_word():
     with open('wordlist.txt', 'r+') as words:
@@ -79,5 +78,16 @@ def check_word(word):
     if word in guesslist or word in word_list:
         return True
     return False
+
+def display_score(score):
+    colors = {'g':'green', 'y':'yellow', 'n':'white'}
+    score += 'n'*(30-len(score))
+    score = list(score)
+    for i in range(len(score)):
+        score[i] = boxit('■', colors[score[i]])        
+    scorecard = ""
+    for i in range(0,30,5):
+        scorecard += '  '+' '.join(score[i:i+5])+'\n'
+    return scorecard
 
 gameplay()
