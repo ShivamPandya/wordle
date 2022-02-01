@@ -4,7 +4,7 @@ from boxit.boxit import boxit
 def gameplay():
 
     wordle = get_word()
-    word = list("WHALE")
+    word = list(wordle)
     count = 0
     grids = [["0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0"],
