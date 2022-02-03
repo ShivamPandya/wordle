@@ -4,18 +4,22 @@ from boxit.boxit import boxit
 def gameplay():
 
     wordle = get_word()
-    word = list(wordle)
+    word = list("WHALE")
     count = 0
     grids = [["0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0"]]
+             ["0", "0", "0", "0", "0"],
+             ["0", "0", "0", "0", "0"],
+             ["0", "0", "0", "0", "0"],
+             ["0", "0", "0", "0", "0"],
+             ["0", "0", "0", "0", "0"]]
 
     score = ""
 
+    keyboard = "Q W E R T Y U I O P \nA S D F G H J K L ■\n■ Z X C V B N M ■ ■"
+
     print_grid(grids)
+    print()
+    print(keyboard)
 
     guess = input("\nTake your guess: \n ").upper()
 
@@ -25,6 +29,7 @@ def gameplay():
             break
         if not check_word(guess.lower()):
             print_grid(grids)
+            print(keyboard)
             print("Guess not allowed! Please try again")
             guess = input("Take your guess: \n ").upper()
             continue
@@ -32,14 +37,20 @@ def gameplay():
             if guess[i] in word:
                 if guess[i] == word[i]:
                     grids[count][i] = boxit(guess[i], 'green')
+                    keyboard = keyboard.replace(guess[i], boxit(guess[i], 'green'))
                     score += "g"
                 else:
                     grids[count][i] = boxit(guess[i], 'yellow')
+                    if not boxit(guess[i], 'green') in keyboard:
+                        keyboard = keyboard.replace(guess[i], boxit(guess[i], 'yellow'))
                     score += "y"
             else:
                 grids[count][i] = guess[i]
+                keyboard = keyboard.replace(guess[i], '■')
                 score += 'n'
         print_grid(grids)
+        print()
+        print(keyboard)
 
         if guess == ''.join(word):
             print(boxit("YOU WON!", "green", pattern = 'solid', shift=2, spacing=2))
@@ -80,7 +91,7 @@ def check_word(word):
     return False
 
 def display_score(score):
-    colors = {'g':'green', 'y':'yellow', 'n':'white'}
+    colors = {'g':'green', 'y':'yellow', 'n':''}
     score += 'n'*(30-len(score))
     score = list(score)
     for i in range(len(score)):
