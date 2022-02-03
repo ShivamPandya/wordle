@@ -4,7 +4,7 @@ from boxit.boxit import boxit
 def gameplay():
 
     wordle = get_word()
-    word = list("WHALE")
+    word = list(wordle)
     count = 0
     grids = [["0", "0", "0", "0", "0"],
              ["0", "0", "0", "0", "0"],
@@ -91,14 +91,14 @@ def check_word(word):
     return False
 
 def display_score(score):
-    colors = {'g':'green', 'y':'yellow', 'n':''}
+    colors = {'g':'🟩', 'y':'🟨', 'n':'⬜'}
     score += 'n'*(30-len(score))
     score = list(score)
     for i in range(len(score)):
-        score[i] = boxit('■', colors[score[i]])        
+        score[i] = colors[score[i]]       
     scorecard = ""
     for i in range(0,30,5):
-        scorecard += '  '+' '.join(score[i:i+5])+'\n'
+        scorecard += '    '+''.join(score[i:i+5])+'\n'
     return scorecard
 
 gameplay()
