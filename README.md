@@ -7,7 +7,7 @@ The best part? You can play it offline and you can play it forever!
 > This is a cli clone of the famous wordle game developed by Josh Wardle.
 
 
-Dependecy:
+Dependency:
 ``` shell
 pip install boxit
 ```
