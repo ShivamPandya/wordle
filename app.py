@@ -54,7 +54,7 @@ def gameplay():
 
         if guess == ''.join(word):
             print(boxit("YOU WON!", "green", pattern = 'solid', shift=2, spacing=2))
-            print(boxit(f"  Totatl tries: {count+1}", "orange"))
+            print(boxit(f"  Total tries: {count+1}", "orange"))
             print(display_score(score))
             break
         count += 1
