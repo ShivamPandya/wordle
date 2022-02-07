@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os
@@ -112,4 +113,5 @@ def display_score(score):
     return scorecard
 
 
-gameplay()
+if __name__ == '__main__':
+    gameplay()
