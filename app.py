@@ -3,11 +3,15 @@
 
 import os
 import random
+import sys
 
 from boxit.boxit import boxit
 
 
 def gameplay():
+
+    if sys.version_info[0] < 3:
+        return 'You are using Python 2.x! Please switch to Python 3.6 or higher.'
 
     wordle = get_word()
     word = list(wordle)
