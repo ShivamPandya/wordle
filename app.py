@@ -37,6 +37,9 @@ def gameplay():
         if guess.lower() == 'q' or guess.lower() == 'quit':
             print("You quit the game")
             break
+        if guess.lower() == 'g':
+            print("You gave up! The word was: " + boxit(wordle, 'green'))
+            break
         if not check_word(guess.lower()):
             print_grid(grids)
             print()
@@ -84,6 +87,7 @@ def gameplay():
 
 def print_grid(grids):
     os.system('cls' if os.name == 'nt' else 'clear')
+    print("'g' to give up or 'q' to quit\n")
     for i in grids:
         for j in i:
             print(f"  {j}", end="")
