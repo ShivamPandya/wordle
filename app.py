@@ -39,6 +39,7 @@ def gameplay():
             break
         if not check_word(guess.lower()):
             print_grid(grids)
+            print()
             print(keyboard)
             print("Guess not allowed! Please try again")
             guess = input("Take your guess: \n ").upper()
