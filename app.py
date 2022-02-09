@@ -77,8 +77,6 @@ def gameplay():
             print(boxit("Sorry, you didn't make it! Better luck next time:)",
                         'red'))
             print("The word was: " + boxit(word, 'green'))
-            print("\nPress enter to exit!")
-            input()
             break
         print()
         guess = input("Take your guess: \n ").upper()
