@@ -90,15 +90,15 @@ def print_grid(grids):
 
 
 def get_word():
-    with open('wordlist.txt', 'r+') as words:
+    with open('wordlist.txt', encoding='utf-8') as words:
         wordlist = words.read().splitlines()
         return random.choice(wordlist).upper()
 
 
 def check_word(word):
-    with open('allowed.txt', 'r+') as guess_file:
+    with open('allowed.txt', encoding='utf-8') as guess_file:
         guesslist = guess_file.read().splitlines()
-    with open('wordlist.txt', 'r+') as words:
+    with open('wordlist.txt', encoding='utf-8') as words:
         word_list = words.read().splitlines()
     if word in guesslist or word in word_list:
         return True
