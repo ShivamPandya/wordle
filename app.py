@@ -13,8 +13,7 @@ def gameplay():
     if sys.version_info[0] < 3:
         return 'You are using Python 2.x! Please switch to Python 3.6 or higher.'
 
-    wordle = get_word()
-    word = list(wordle)
+    word = get_word()
     count = 0
     grids = [["0", "0", "0", "0", "0"],
              ["0", "0", "0", "0", "0"],
@@ -37,8 +36,12 @@ def gameplay():
         if guess.lower() == 'q' or guess.lower() == 'quit':
             print("You quit the game")
             break
+        if guess.lower() == 'g':
+            print("You gave up! The word was: " + boxit(word, 'green'))
+            break
         if not check_word(guess.lower()):
             print_grid(grids)
+            print()
             print(keyboard)
             print("Guess not allowed! Please try again")
             guess = input("Take your guess: \n ").upper()
@@ -63,7 +66,7 @@ def gameplay():
         print()
         print(keyboard)
 
-        if guess == ''.join(word):
+        if guess == word:
             print(boxit("YOU WON!", "green", pattern='solid',
                         shift=2, spacing=2))
             print(boxit(f"  Total tries: {count+1}", "orange"))
@@ -73,9 +76,7 @@ def gameplay():
         if count == 6:
             print(boxit("Sorry, you didn't make it! Better luck next time:)",
                         'red'))
-            print("The word was: " + boxit(wordle, 'green'))
-            print("\nPress enter to exit!")
-            input()
+            print("The word was: " + boxit(word, 'green'))
             break
         print()
         guess = input("Take your guess: \n ").upper()
@@ -83,6 +84,7 @@ def gameplay():
 
 def print_grid(grids):
     os.system('cls' if os.name == 'nt' else 'clear')
+    print("'g' to give up or 'q' to quit\n")
     for i in grids:
         for j in i:
             print(f"  {j}", end="")
