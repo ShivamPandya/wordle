@@ -9,6 +9,10 @@ from boxit.boxit import boxit
 
 
 def display_score(score):
+    """
+    Display a white-yellow-and-green grid
+    representing player's guesses after a won game
+    """
     colors = {'g': '🟩', 'y': '🟨', 'n': '⬜'}
     score += 'n'*(30-len(score))
     score = list(score)
@@ -17,10 +21,19 @@ def display_score(score):
     scorecard = ""
     for i in range(0, 30, 5):
         scorecard += '    '+''.join(score[i:i+5])+'\n'
-    return scorecard
+    print(scorecard)
 
 
 def print_interface(letter_grid, keyboard, game_state, correct_answer):
+    """
+    Based on the current game state, print all the main elements
+    of the game interface, including, top to bottom:
+    - instructions on how to quit the game
+    - letter grid
+    - keyboard
+    - error message when an illegal word is entered
+    - messages notifying the player of victory or loss
+    """
     os.system('cls' if os.name == 'nt' else 'clear')
     print("'g' to give up or 'q' to quit\n")
 
@@ -41,7 +54,7 @@ def print_interface(letter_grid, keyboard, game_state, correct_answer):
         print(boxit("YOU WON!", "green", pattern='solid',
               shift=2, spacing=2))
         print(boxit(f"  Total tries: {game_state['attempt']}", "orange"))
-        print(display_score(game_state['score']))
+        display_score(game_state['score'])
     elif game_state['attempt'] == 6:
         print(boxit("Sorry, you didn't make it! Better luck next time:)",
                     'red'))
@@ -52,12 +65,18 @@ def print_interface(letter_grid, keyboard, game_state, correct_answer):
 
 
 def get_word():
+    """
+    Load a word to guess from a word list on game init
+    """
     with open('wordlist.txt', encoding='utf-8') as words:
         wordlist = words.read().splitlines()
         return random.choice(wordlist).upper()
 
 
-def check_word(player_guess):
+def guess_is_valid(player_guess):
+    """
+    Validate player's guess by checking a word list
+    """
     if not player_guess:
         return False
     with open('allowed.txt', encoding='utf-8') as guess_file:
@@ -70,6 +89,10 @@ def check_word(player_guess):
 
 
 def update_letter_display(letter_grid, keyboard, game_state, correct_answer, player_guess):
+    """
+    Based on player's previous guess, update the letter grid and keyboard display to be
+    printed with the print_interface() function
+    """
     for position, letter in enumerate(player_guess):
         if letter in correct_answer:
             if letter == correct_answer[position]:
@@ -126,7 +149,7 @@ if __name__ == '__main__':
         if guess.lower() == 'g':
             print("You gave up! The word was: " + boxit(word, 'green'))
             break
-        if not check_word(guess.lower()):
+        if not guess_is_valid(guess.lower()):
             state['invalid_word'] = True
             # Don't count this attempt
             continue
