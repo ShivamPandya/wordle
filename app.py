@@ -114,7 +114,11 @@ if __name__ == '__main__':
         state = print_interface(grid, kbd, state, word)
         if state['game_over']:
             break
-        guess = input("Take your guess: \n ").upper()
+        try:
+            guess = input("Take your guess: \n ").upper()
+        except (KeyboardInterrupt, EOFError):
+            print()
+            sys.exit(1)
 
         if guess.lower() in ['q', 'quit']:
             print("You quit the game")
