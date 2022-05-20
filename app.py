@@ -93,22 +93,39 @@ def update_letter_display(letter_grid, keyboard, game_state, correct_answer, pla
     Based on player's previous guess, update the letter grid and keyboard display to be
     printed with the print_interface() function
     """
+    # First pass: Deal with green and white letters
     for position, letter in enumerate(player_guess):
-        if letter in correct_answer:
-            if letter == correct_answer[position]:
-                letter_grid[game_state['attempt']][position] = boxit(letter, 'green')
-                keyboard = keyboard.replace(letter, boxit(letter, 'green'))
-                game_state['score'] += "g"
-            else:
-                letter_grid[game_state['attempt']][position] = boxit(letter, 'yellow')
-                if not boxit(letter, 'green') in keyboard:
-                    keyboard = keyboard.replace(letter,
-                                                boxit(letter, 'yellow'))
-                game_state['score'] += "y"
-        else:
+        if letter == correct_answer[position]:
+            letter_grid[game_state['attempt']][position] = boxit(letter, 'green')
+            keyboard = keyboard.replace(letter, boxit(letter, 'green'))
+        elif letter not in correct_answer:
             letter_grid[game_state['attempt']][position] = letter
             keyboard = keyboard.replace(letter, '■')
+
+    # Second pass: When turning letters yellow, check against green ones
+    for position, letter in enumerate(player_guess):
+        if letter_grid[game_state['attempt']][position] != '0':
+            continue
+        if (
+            letter in correct_answer
+            and boxit(letter, 'green') not in letter_grid[game_state['attempt']]
+        ):
+            letter_grid[game_state['attempt']][position] = boxit(letter, 'yellow')
+            if boxit(letter, 'green') not in keyboard:
+                keyboard = keyboard.replace(letter,
+                                            boxit(letter, 'yellow'))
+        else:
+            letter_grid[game_state['attempt']][position] = letter
+
+    # Go over the last evaluated guess and set the score accordingly
+    for letter in letter_grid[game_state['attempt']]:
+        if letter.startswith('\x1b[32m'):
+            game_state['score'] += 'g'
+        elif letter.startswith('\x1b[93m'):
+            game_state['score'] += 'y'
+        else:
             game_state['score'] += 'n'
+
     return letter_grid, keyboard
 
 
