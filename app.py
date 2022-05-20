@@ -5,7 +5,7 @@ import os
 import random
 import sys
 
-from boxit.boxit import boxit
+from boxit import boxit
 
 
 def display_score(score):
