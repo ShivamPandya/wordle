@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import getopt
 import os
 import random
 import sys
 
 from boxit import boxit
 
+debug = False
 
 def display_score(score):
     """
@@ -43,6 +45,8 @@ def print_interface(letter_grid, keyboard, game_state, correct_answer):
         print()
 
     print(f"\n{keyboard}")
+    if debug:
+        print(correct_answer)
 
     if game_state['invalid_word']:
         print("Guess not allowed! Please try again")
@@ -136,6 +140,39 @@ if __name__ == '__main__':
     if sys.version_info[0] < 3:
         print('You are using Python 2.x! Please switch to Python 3.6 or higher.')
         sys.exit(1)
+
+    # Command line options
+    # Don't list -D in help, it's cheating:)
+    program_usage_string = (
+        "Usage:"  #pylint: disable=consider-using-f-string
+        "\n{0} [-h]"
+        "\n"
+    ).format(os.path.basename(__file__))
+
+
+    program_options = (
+        "\n    -h, --help                  Print this help and exit"
+    )
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   'Dh',
+                                   ['debug', 'help'])
+    except getopt.GetoptError as err:
+        print(err)
+        print(program_usage_string)
+        print(program_options)
+        sys.exit(1)
+
+    for opt, arg in opts:
+        if opt in ['-h', '--help']:
+            print(program_usage_string)
+            print(program_options)
+            sys.exit(0)
+        if opt in ['-D', '--debug']:
+            debug = True
+
+
 
     word = get_word()
     grid = [["0", "0", "0", "0", "0"],
