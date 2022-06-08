@@ -9,6 +9,7 @@ import sys
 from boxit import boxit
 
 debug = False
+hard_mode = False
 
 def display_score(score):
     """
@@ -48,9 +49,9 @@ def print_interface(letter_grid, keyboard, game_state, correct_answer):
     if debug:
         print(correct_answer)
 
-    if game_state['invalid_word']:
-        print("Guess not allowed! Please try again")
-        game_state['invalid_word'] = False
+    if game_state['error_message']:
+        print(game_state['error_message'])
+        game_state['error_message'] = ''
     else:
         print()
 
@@ -77,19 +78,46 @@ def get_word():
         return random.choice(wordlist).upper()
 
 
-def guess_is_valid(player_guess):
+def guess_is_valid(player_guess, letter_grid, game_state):
     """
     Validate player's guess by checking a word list
+    and by enforcing hard mode rules, if enabled
     """
-    if not player_guess:
-        return False
     with open('allowed.txt', encoding='utf-8') as guess_file:
         guesslist = guess_file.read().splitlines()
     with open('wordlist.txt', encoding='utf-8') as words:
         word_list = words.read().splitlines()
-    if player_guess in guesslist or player_guess in word_list:
-        return True
-    return False
+    if player_guess not in guesslist and player_guess not in word_list:
+        game_state['error_message'] = 'Guess not allowed! Please try again'
+        return False
+    if hard_mode and game_state['attempt'] > 0:
+        ordinals = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th',
+                    '10th', '11th', '12th', '13th', '14th', '15th', '16th',
+                    '17th', '18th', '19th', '20th']
+        current_guess = player_guess.upper()
+        previous_guess = letter_grid[game_state['attempt'] - 1]
+        for position, letter in enumerate(current_guess):
+            if (
+                    previous_guess[position].startswith('\x1b[32m')
+                    and previous_guess[position] != boxit(letter, 'green')
+            ):
+                game_state['error_message'] = f'{ordinals[position]} letter must be {previous_guess[position][5]}'
+                return False
+        for letter in previous_guess:
+            if letter.startswith('\x1b[93m'):
+                prev_count = previous_guess.count(letter) + previous_guess.count(boxit(letter[5], 'green'))
+                cur_count = current_guess.count(letter[5])
+                if prev_count > cur_count:
+                    if cur_count == 0:
+                        if letter[5] in 'AEFHILMNORSX':
+                            article = 'an'
+                        else:
+                            article = 'a'
+                    else:
+                        article = 'another'
+                    game_state['error_message'] = f'Word must contain {article} {letter[5]}'
+                    return False
+    return True
 
 
 def update_letter_display(letter_grid, keyboard, game_state, correct_answer, player_guess):
@@ -146,6 +174,7 @@ if __name__ == '__main__':
     program_usage_string = (
         "Usage:"  #pylint: disable=consider-using-f-string
         "\n{0} [-h]"
+        "\n{0} [-H]"
         "\n"
     ).format(os.path.basename(__file__))
 
@@ -156,8 +185,8 @@ if __name__ == '__main__':
 
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   'Dh',
-                                   ['debug', 'help'])
+                                   'DhH',
+                                   ['debug', 'hard', 'help'])
     except getopt.GetoptError as err:
         print(err)
         print(program_usage_string)
@@ -171,8 +200,8 @@ if __name__ == '__main__':
             sys.exit(0)
         if opt in ['-D', '--debug']:
             debug = True
-
-
+        if opt in ['-H', '--hard']:
+            hard_mode = True
 
     word = get_word()
     grid = [["0", "0", "0", "0", "0"],
@@ -186,7 +215,7 @@ if __name__ == '__main__':
 
     state = {'attempt': 0,
              'game_over': False,
-             'invalid_word': False,
+             'error_message': '',
              'score': ''}
 
     while True:
@@ -205,8 +234,7 @@ if __name__ == '__main__':
         if guess.lower() == 'g':
             print("You gave up! The word was: " + boxit(word, 'green'))
             break
-        if not guess_is_valid(guess.lower()):
-            state['invalid_word'] = True
+        if not guess_is_valid(guess.lower(), grid, state):
             # Don't count this attempt
             continue
 
