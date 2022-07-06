@@ -98,24 +98,26 @@ def update_letter_display(letter_grid, keyboard, game_state, correct_answer, pla
         if letter == correct_answer[position]:
             letter_grid[game_state['attempt']][position] = boxit(letter, 'green')
             keyboard = keyboard.replace(letter, boxit(letter, 'green'))
-        elif letter not in correct_answer:
+        else:
             letter_grid[game_state['attempt']][position] = letter
-            keyboard = keyboard.replace(letter, '■')
+            if letter not in correct_answer:
+                keyboard = keyboard.replace(letter, '■')
 
     # Second pass: When turning letters yellow, check against green ones
     for position, letter in enumerate(player_guess):
-        if letter_grid[game_state['attempt']][position] != '0':
+        if letter not in correct_answer:
             continue
-        if (
-            letter in correct_answer
-            and boxit(letter, 'green') not in letter_grid[game_state['attempt']]
-        ):
+        if len(letter_grid[game_state['attempt']][position]) > 1:
+            continue  # letter is already green
+        tmp_answer = list(correct_answer)
+        for pos, char in enumerate(letter_grid[game_state['attempt']]):
+            if char in [boxit(letter, 'green'), boxit(letter, 'green')]:
+                tmp_answer[pos] = '_'
+        if letter in tmp_answer:
             letter_grid[game_state['attempt']][position] = boxit(letter, 'yellow')
             if boxit(letter, 'green') not in keyboard:
                 keyboard = keyboard.replace(letter,
                                             boxit(letter, 'yellow'))
-        else:
-            letter_grid[game_state['attempt']][position] = letter
 
     # Go over the last evaluated guess and set the score accordingly
     for letter in letter_grid[game_state['attempt']]:
